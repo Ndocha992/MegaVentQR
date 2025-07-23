@@ -1,577 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MegaVent - Event Registration</title>
-    <link rel="shortcut icon" href="images/logo.png" type="image/x-icon">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #6B46C1 0%, #8B5CF6 50%, #06D6A0 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            position: relative;
-            overflow-x: hidden;
-        }
-        
-        /* Background decoration */
-        body::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 30% 30%, rgba(139, 92, 246, 0.3) 0%, transparent 50%),
-                        radial-gradient(circle at 70% 70%, rgba(6, 214, 160, 0.3) 0%, transparent 50%);
-            animation: float 20s ease-in-out infinite;
-            z-index: -1;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            33% { transform: translate(30px, -30px) rotate(120deg); }
-            66% { transform: translate(-20px, 20px) rotate(240deg); }
-        }
-        
-        .container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 20px 40px rgba(107, 70, 193, 0.15),
-                        0 0 0 1px rgba(255, 255, 255, 0.1);
-            text-align: center;
-            max-width: 400px;
-            width: 100%;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #6B46C1, #8B5CF6, #06D6A0);
-        }
-        
-        .logo-container {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, #6B46C1, #8B5CF6);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 24px;
-            position: relative;
-            box-shadow: 0 15px 30px rgba(107, 70, 193, 0.2),
-                        0 0 0 8px rgba(255, 255, 255, 0.6);
-        }
-        
-        .logo-container img {
-            width: 75px;
-            height: 75px;
-            object-fit: contain;
-        }
-        
-        /* Fallback logo if image doesn't load */
-        .logo-fallback {
-            width: 75px;
-            height: 75px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            font-weight: 800;
-            color: white;
-            letter-spacing: -1px;
-        }
-        
-        h1 {
-            color: #6B46C1;
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
-        }
-        
-        .subtitle {
-            color: #64748B;
-            font-size: 16px;
-            font-weight: 500;
-            margin-bottom: 32px;
-        }
-        
-        .event-info {
-            background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
-            border-radius: 20px;
-            padding: 24px;
-            margin-bottom: 32px;
-            text-align: left;
-            border: 1px solid #E2E8F0;
-        }
-        
-        .event-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #0F172A;
-            margin-bottom: 16px;
-        }
-        
-        .event-detail {
-            display: flex;
-            align-items: center;
-            margin-bottom: 12px;
-            color: #64748B;
-            font-weight: 500;
-        }
-        
-        .event-detail:last-child {
-            margin-bottom: 0;
-        }
-        
-        .event-detail .icon {
-            width: 24px;
-            height: 24px;
-            margin-right: 12px;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #6B46C1, #8B5CF6);
-            border-radius: 8px;
-            color: white;
-        }
-        
-        .loading-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin: 32px 0;
-        }
-        
-        /* Three bouncing dots - matching Flutter SpinKitThreeBounce */
-        .loading-dots {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-        
-        .dot {
-            width: 20px;
-            height: 20px;
-            background: linear-gradient(135deg, #6B46C1, #8B5CF6);
-            border-radius: 50%;
-            animation: bounce 1.4s ease-in-out infinite both;
-        }
-        
-        .dot:nth-child(1) { animation-delay: -0.32s; }
-        .dot:nth-child(2) { animation-delay: -0.16s; }
-        .dot:nth-child(3) { animation-delay: 0s; }
-        
-        @keyframes bounce {
-            0%, 80%, 100% {
-                transform: scale(0.8);
-                opacity: 0.5;
-            }
-            40% {
-                transform: scale(1.2);
-                opacity: 1;
-            }
-        }
-        
-        .status {
-            font-size: 16px;
-            color: #64748B;
-            font-weight: 500;
-            text-align: center;
-        }
-        
-        .status-secondary {
-            font-size: 12px;
-            color: rgba(100, 116, 139, 0.7);
-            font-weight: 400;
-            margin-top: 8px;
-        }
-        
-        .btn {
-            display: inline-block;
-            padding: 16px 32px;
-            color: white;
-            text-decoration: none;
-            border-radius: 16px;
-            font-weight: 600;
-            font-size: 16px;
-            font-family: 'Poppins', sans-serif;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-            margin-bottom: 12px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #6B46C1, #8B5CF6);
-            box-shadow: 0 8px 20px rgba(107, 70, 193, 0.3);
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 24px rgba(107, 70, 193, 0.4);
-        }
-        
-        .btn-secondary {
-            background: white;
-            color: #6B46C1;
-            border: 2px solid #6B46C1;
-            box-shadow: 0 8px 20px rgba(107, 70, 193, 0.1);
-        }
-        
-        .btn-secondary:hover {
-            transform: translateY(-2px);
-            background: linear-gradient(135deg, #6B46C1, #8B5CF6);
-            color: white;
-            box-shadow: 0 12px 24px rgba(107, 70, 193, 0.3);
-        }
-        
-        .error {
-            background: linear-gradient(135deg, #FEF2F2, #FEE2E2);
-            color: #991B1B;
-            padding: 20px;
-            border-radius: 16px;
-            margin: 16px 0;
-            border: 1px solid #FECACA;
-            font-weight: 500;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
-        }
-        
-        .success {
-            background: linear-gradient(135deg, #F0FDF4, #DCFCE7);
-            color: #166534;
-            padding: 20px;
-            border-radius: 16px;
-            margin: 16px 0;
-            border: 1px solid #BBF7D0;
-            font-weight: 500;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
-        }
-        
-        .hidden {
-            display: none;
-        }
-        
-        .footer {
-            margin-top: 32px;
-            padding-top: 24px;
-            border-top: 1px solid #E2E8F0;
-            color: #94A3B8;
-            font-size: 14px;
-            font-weight: 500;
-        }
-        
-        /* Responsive design */
-        @media (max-width: 480px) {
-            .container {
-                padding: 32px 24px;
-                margin: 16px;
-            }
-            
-            .logo-container {
-                width: 80px;
-                height: 80px;
-            }
-            
-            .logo-container img {
-                width: 60px;
-                height: 60px;
-            }
-            
-            h1 {
-                font-size: 24px;
-            }
-            
-            .subtitle {
-                font-size: 14px;
-            }
-        }
-        
-        /* Pulse animation for logo */
-        .logo-container {
-            animation: logoPulse 3s ease-in-out infinite;
-        }
-        
-        @keyframes logoPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-    </style>
-</head>
-<body>
+    <link rel="shortcut icon" href="images/logo.png" type="image/x-icon" />
+    <link rel="stylesheet" href="styles.css" />
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  </head>
+  <body>
     <div class="container">
-        <div class="logo-container">
-            <img src="images/logo.png" alt="MegaVent Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-            <div class="logo-fallback" style="display: none;">MV</div>
+      <div class="logo-container">
+        <img
+          src="images/logo.png"
+          alt="MegaVent Logo"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="logo-fallback" style="display: none">MV</div>
+      </div>
+
+      <h1>MegaVent</h1>
+      <p class="subtitle">Event Registration</p>
+
+      <!-- Event Info (will be populated by JavaScript) -->
+      <div id="eventInfo" class="event-info hidden">
+        <div class="event-title" id="eventTitle">Loading event...</div>
+        <div class="event-detail">
+          <div class="icon">📅</div>
+          <span id="eventDate">Loading...</span>
         </div>
-        
-        <h1>MegaVent</h1>
-        <p class="subtitle">Event Registration</p>
-        
-        <!-- Event Info (will be populated by JavaScript) -->
-        <div id="eventInfo" class="event-info hidden">
-            <div class="event-title" id="eventTitle">Loading event...</div>
-            <div class="event-detail">
-                <div class="icon">📅</div>
-                <span id="eventDate">Loading...</span>
-            </div>
-            <div class="event-detail">
-                <div class="icon">🕒</div>
-                <span id="eventTime">Loading...</span>
-            </div>
-            <div class="event-detail">
-                <div class="icon">📍</div>
-                <span id="eventLocation">Loading...</span>
-            </div>
+        <div class="event-detail">
+          <div class="icon">🕒</div>
+          <span id="eventTime">Loading...</span>
         </div>
-        
-        <!-- Loading State -->
-        <div id="loadingContainer" class="loading-container">
-            <div class="loading-dots">
-                <div class="dot"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
-            </div>
-            <div class="status" id="loadingStatus">Creating amazing events...</div>
-            <div class="status-secondary">Please wait...</div>
+        <div class="event-detail">
+          <div class="icon">📍</div>
+          <span id="eventLocation">Loading...</span>
         </div>
-        
-        <!-- Error Message -->
-        <div id="errorMessage" class="error hidden"></div>
-        
-        <!-- Success Message -->
-        <div id="successMessage" class="success hidden"></div>
-        
-        <!-- Action Buttons -->
-        <div id="actionButtons" class="hidden">
-            <button id="openAppBtn" class="btn btn-primary">Open MegaVent App</button>
-            <a id="downloadBtn" href="https://mediafire.com/app-download-link" class="btn btn-secondary">Download MegaVent App</a>
+        <div class="event-detail">
+          <div class="icon">👥</div>
+          <span id="eventCapacity">Loading...</span>
         </div>
-        
-        <div class="footer">
-            <p>Powered by MegaVent</p>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loadingContainer" class="loading-container">
+        <div class="loading-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
         </div>
+        <div class="status" id="loadingStatus">Creating amazing events...</div>
+        <div class="status-secondary">Please wait...</div>
+      </div>
+
+      <!-- Error Message -->
+      <div id="errorMessage" class="error hidden"></div>
+
+      <!-- Success Message -->
+      <div id="successMessage" class="success hidden"></div>
+
+      <!-- Action Buttons -->
+      <div id="actionButtons" class="hidden">
+        <button id="openAppBtn" class="btn btn-primary">Try Again</button>
+        <a
+          id="downloadBtn"
+          href="https://www.mediafire.com/file/cag5w7rvi38kauw/MegaVent.apk/file"
+          class="btn btn-secondary"
+          target="_blank"
+          >Download MegaVent App</a
+        >
+      </div>
+
+      <div class="footer">
+        <p>Powered by MegaVent</p>
+      </div>
     </div>
 
-    <script>
-        class MegaVentQRHandler {
-            constructor() {
-                this.eventId = null;
-                this.autoRegister = false;
-                this.appScheme = 'megavent://';
-                this.appStoreUrl = 'https://mediafire.com/app-download-link';
-                this.init();
-            }
-            
-            init() {
-                // Parse URL parameters
-                this.parseUrlParams();
-                
-                // Show event info if available
-                this.displayEventInfo();
-                
-                // Start the app detection process
-                setTimeout(() => {
-                    this.handleAppDetection();
-                }, 2000); // Wait 2 seconds to show the loading animation
-            }
-            
-            parseUrlParams() {
-                const urlParams = new URLSearchParams(window.location.search);
-                this.eventId = urlParams.get('eventId') || urlParams.get('eventid');
-                this.autoRegister = urlParams.get('autoRegister') === 'true' || 
-                                  urlParams.get('autoregister') === 'true';
-                
-                console.log('Parsed params:', { 
-                    eventId: this.eventId, 
-                    autoRegister: this.autoRegister 
-                });
-            }
-            
-            displayEventInfo() {
-                if (!this.eventId) {
-                    setTimeout(() => {
-                        this.showError('Invalid event link. Event ID is missing.');
-                    }, 2000);
-                    return;
-                }
-                
-                // Show loading initially
-                this.updateLoadingStatus('Checking for MegaVent app...');
-                
-                // In a real implementation, you might fetch event details from your API
-                // For now, we'll show generic event info after loading
-                setTimeout(() => {
-                    document.getElementById('eventTitle').textContent = 'Event Registration';
-                    document.getElementById('eventDate').textContent = 'Event details loading...';
-                    document.getElementById('eventTime').textContent = 'Please wait...';
-                    document.getElementById('eventLocation').textContent = 'Opening MegaVent app...';
-                    document.getElementById('eventInfo').classList.remove('hidden');
-                }, 1000);
-            }
-            
-            async handleAppDetection() {
-                try {
-                    // Update status
-                    this.updateLoadingStatus('Attempting to open MegaVent app...');
-                    
-                    // Try to open the app
-                    const appOpened = await this.tryOpenApp();
-                    
-                    if (!appOpened) {
-                        // App not installed, show download option
-                        this.handleAppNotInstalled();
-                    } else {
-                        this.showSuccess('Opening MegaVent app...');
-                    }
-                } catch (error) {
-                    console.error('Error in app detection:', error);
-                    this.handleAppNotInstalled();
-                }
-            }
-            
-            async tryOpenApp() {
-                return new Promise((resolve) => {
-                    const deepLink = `${this.appScheme}register?eventId=${this.eventId}&autoRegister=${this.autoRegister}`;
-                    
-                    // Create a hidden iframe to trigger the app
-                    const iframe = document.createElement('iframe');
-                    iframe.style.display = 'none';
-                    iframe.src = deepLink;
-                    document.body.appendChild(iframe);
-                    
-                    // Also try window.location for broader compatibility
-                    setTimeout(() => {
-                        window.location.href = deepLink;
-                    }, 100);
-                    
-                    // Track if user leaves the page (app opened)
-                    let hasLeft = false;
-                    
-                    const handleVisibilityChange = () => {
-                        if (document.hidden) {
-                            hasLeft = true;
-                            resolve(true); // App likely opened
-                        }
-                    };
-                    
-                    const handleBlur = () => {
-                        hasLeft = true;
-                        resolve(true); // App likely opened
-                    };
-                    
-                    document.addEventListener('visibilitychange', handleVisibilityChange);
-                    window.addEventListener('blur', handleBlur);
-                    
-                    // If user doesn't leave within 3 seconds, assume app isn't installed
-                    setTimeout(() => {
-                        document.removeEventListener('visibilitychange', handleVisibilityChange);
-                        window.removeEventListener('blur', handleBlur);
-                        document.body.removeChild(iframe);
-                        
-                        if (!hasLeft) {
-                            resolve(false); // App not installed
-                        }
-                    }, 3000);
-                });
-            }
-            
-            handleAppNotInstalled() {
-                this.hideLoading();
-                this.updateLoadingStatus('MegaVent app not found');
-                
-                // Show download and retry options
-                this.showActionButtons();
-                this.showError('MegaVent app is not installed on your device. Please download and install the app, then scan the QR code again.');
-            }
-            
-            showActionButtons() {
-                const actionButtons = document.getElementById('actionButtons');
-                const openAppBtn = document.getElementById('openAppBtn');
-                const downloadBtn = document.getElementById('downloadBtn');
-                
-                // Set up retry button
-                openAppBtn.onclick = () => {
-                    this.showLoading();
-                    this.handleAppDetection();
-                };
-                
-                // Set up download button
-                downloadBtn.href = this.appStoreUrl;
-                downloadBtn.target = '_blank';
-                
-                actionButtons.classList.remove('hidden');
-            }
-            
-            showLoading() {
-                document.getElementById('loadingContainer').classList.remove('hidden');
-                document.getElementById('actionButtons').classList.add('hidden');
-                document.getElementById('errorMessage').classList.add('hidden');
-                document.getElementById('successMessage').classList.add('hidden');
-            }
-            
-            hideLoading() {
-                document.getElementById('loadingContainer').classList.add('hidden');
-            }
-            
-            updateLoadingStatus(message) {
-                document.getElementById('loadingStatus').textContent = message;
-            }
-            
-            showError(message) {
-                this.hideLoading();
-                document.getElementById('errorMessage').textContent = message;
-                document.getElementById('errorMessage').classList.remove('hidden');
-            }
-            
-            showSuccess(message) {
-                this.hideLoading();
-                document.getElementById('successMessage').textContent = message;
-                document.getElementById('successMessage').classList.remove('hidden');
-            }
-        }
-        
-        // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            new MegaVentQRHandler();
-        });
-        
-        // Handle page visibility change (detect when user returns from app)
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) {
-                // User returned to browser, app might not have handled the link
-                console.log('User returned to browser');
-            }
-        });
-    </script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
