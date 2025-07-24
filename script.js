@@ -18,7 +18,7 @@ class MegaVentQRHandler {
     this.autoRegister = false;
     this.appScheme = "megavent://";
     this.appStoreUrl =
-      "https://www.mediafire.com/file/sviq6fdb15qv91u/MegaVent.apk/file";
+      "https://www.mediafire.com/file/ovs624hsv6jauam/MegaVent.apk/file";
     this.eventData = null;
     this.init();
   }
